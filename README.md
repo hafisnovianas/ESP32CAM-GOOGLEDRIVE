@@ -1,6 +1,3 @@
-Tentu, berikut adalah dokumentasi lengkap untuk proyek ESP32-CAM Anda, menjelaskan cara penggunaan dan penyesuaian yang bisa dilakukan oleh pengguna lain.
-
-***
 
 ### **Dokumentasi Proyek: Kamera ESP32 ke Google Drive**
 
