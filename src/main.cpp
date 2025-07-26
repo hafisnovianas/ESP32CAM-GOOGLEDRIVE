@@ -4,6 +4,9 @@
 #include "HTTPClient.h"
 #include "base64.h"
 
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
+
 // Ganti dengan kredensial WiFi Anda
 const char* ssid = "SABOSAPTE";
 const char* password = "12345678";
@@ -42,6 +45,9 @@ void blinkLED(int count) {
 }
 
 void setup() {
+  // Matikan brownout detector untuk stabilitas daya
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+  
   Serial.begin(115200);
 
   camera_config_t config;
