@@ -1,18 +1,16 @@
-// KODE ARDUINO BARU
 #include "esp_camera.h"
 #include "Arduino.h"
 #include "WiFi.h"
 #include "HTTPClient.h"
-#include "base64.h" // Library untuk encoding
+#include "base64.h"
 
 // Ganti dengan kredensial WiFi Anda
 const char* ssid = "SABOSAPTE";
 const char* password = "12345678";
 
-// NANTI GANTI DENGAN URL DARI DEPLOYMENT BARU
 String scriptURL = "https://script.google.com/macros/s/AKfycbyKBDdqSweZSknEr6jbdbjDhUd331L_vq-tsQks70DpHYff5P_EL5M5PyA_ZK332kA0/exec";
 
-// Konfigurasi Pin untuk model AI-THINKER (tetap sama)
+// Konfigurasi Pin untuk model AI-THINKER
 #define PWDN_GPIO_NUM     32
 #define RESET_GPIO_NUM    -1
 #define XCLK_GPIO_NUM      0
@@ -32,7 +30,7 @@ String scriptURL = "https://script.google.com/macros/s/AKfycbyKBDdqSweZSknEr6jbd
 
 void setup() {
   Serial.begin(115200);
-  // Inisialisasi kamera (kode setup tetap sama)
+
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -58,13 +56,25 @@ void setup() {
   config.jpeg_quality = 12;
   config.fb_count = 1;
 
+  // Cek jika ada PSRAM untuk alokasi buffer yang lebih besar dan double buffering
+  if(psramFound()){
+    config.frame_size = FRAMESIZE_UXGA; // Resolusi tinggi
+    config.jpeg_quality = 10;           // Kualitas gambar lebih baik (angka lebih kecil)
+    config.fb_count = 2;                // Aktifkan double buffer
+    Serial.println("PSRAM ditemukan, menggunakan pengaturan kualitas tinggi.");
+  } else {
+    config.frame_size = FRAMESIZE_SVGA; // Resolusi lebih aman untuk RAM internal
+    config.jpeg_quality = 12;           // Kualitas standar
+    config.fb_count = 1;                // Hanya satu buffer
+    Serial.println("PSRAM tidak ditemukan, menggunakan pengaturan standar.");
+  }
+
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
     Serial.printf("Inisialisasi kamera gagal dengan error 0x%x", err);
     return;
   }
   
-  // Koneksi WiFi (kode setup tetap sama)
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
