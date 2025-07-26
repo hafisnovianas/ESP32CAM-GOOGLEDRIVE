@@ -28,6 +28,19 @@ String scriptURL = "https://script.google.com/macros/s/AKfycbyKBDdqSweZSknEr6jbd
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
 
+// Fungsi untuk memberikan sinyal kedip pada LED Flash (GPIO 4)
+void blinkLED(int count) {
+  ledcAttachPin(4, 3);      // Gunakan GPIO 4 (Flash LED) dan channel PWM 3
+  ledcSetup(3, 5000, 8);    // Setup channel 3: frekuensi 5000 Hz, resolusi 8-bit
+  for (int i = 0; i < count; i++) {
+    ledcWrite(3, 80);       // Nyalakan LED (nilai 80 agar tidak terlalu silau)
+    delay(150);
+    ledcWrite(3, 0);        // Matikan LED
+    delay(150);
+  }
+  ledcDetachPin(4);         // Lepaskan pin dari channel setelah selesai
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -88,6 +101,7 @@ void setup() {
     // Cek jika sudah lebih dari 20 detik
     if (millis() - startTime > 20000) { 
       Serial.println("\nGagal terhubung ke WiFi, restart...");
+      blinkLED(3);
       delay(1000);
       ESP.restart(); // Restart ESP jika gagal
     }
@@ -96,6 +110,7 @@ void setup() {
   Serial.println("\nTerhubung ke WiFi!");
   Serial.print("Alamat IP: ");
   Serial.println(WiFi.localIP());
+  blinkLED(5);
 }
 
 void loop() {
