@@ -74,12 +74,25 @@ void setup() {
     Serial.printf("Inisialisasi kamera gagal dengan error 0x%x", err);
     return;
   }
-  
+
+  // Koneksi WiFi dengan Timeout dan Auto-Restart 📡
+  WiFi.mode(WIFI_STA);
+  Serial.println("Menghubungkan ke WiFi...");
   WiFi.begin(ssid, password);
+
+  long startTime = millis();
+  // Coba hubungkan selama 20 detik
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    // Cek jika sudah lebih dari 20 detik
+    if (millis() - startTime > 20000) { 
+      Serial.println("\nGagal terhubung ke WiFi, restart...");
+      delay(1000);
+      ESP.restart(); // Restart ESP jika gagal
+    }
   }
+
   Serial.println("\nTerhubung ke WiFi!");
   Serial.print("Alamat IP: ");
   Serial.println(WiFi.localIP());
