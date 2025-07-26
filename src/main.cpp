@@ -141,6 +141,9 @@ void loop() {
     // Set content type ke JSON
     http.addHeader("Content-Type", "application/json");
 
+    // Atur batas waktu 20 detik untuk koneksi dan respons server ⏳
+    http.setTimeout(20000); 
+
     int httpResponseCode = http.POST(payload);
 
     if (httpResponseCode > 0) {
@@ -149,9 +152,19 @@ void loop() {
       Serial.println("Respons dari server:");
       Serial.println(response);
     } else {
-      Serial.printf("Gagal mengirim gambar, kode error: %s\n", http.errorToString(httpResponseCode).c_str());
+      // Berikan pesan error yang lebih spesifik jika terjadi timeout
+      if (httpResponseCode == -4) {
+        Serial.println("Koneksi ke server timeout!");
+      } else {
+        Serial.printf("Gagal mengirim gambar, kode error: %s\n", http.errorToString(httpResponseCode).c_str());
+      }
     }
     http.end();
+  } else {
+    Serial.println("Koneksi WiFi terputus, mencoba restart...");
+    blinkLED(3);
+    delay(1000);
+    ESP.restart();
   }
   
   esp_camera_fb_return(fb);
