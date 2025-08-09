@@ -8,8 +8,8 @@
 #include "soc/rtc_cntl_reg.h"
 
 // Ganti dengan kredensial WiFi Anda
-const char* ssid = "SABOSAPTE";
-const char* password = "12345678";
+const char* ssid = "Lab-Farmasi";
+const char* password = "FarmasiUmri1";
 
 String scriptURL = "https://script.google.com/macros/s/AKfycbyKBDdqSweZSknEr6jbdbjDhUd331L_vq-tsQks70DpHYff5P_EL5M5PyA_ZK332kA0/exec";
 
@@ -93,6 +93,10 @@ void setup() {
     Serial.printf("Inisialisasi kamera gagal dengan error 0x%x", err);
     return;
   }
+
+  // Turunkan resolusi untuk frame rate yang lebih cepat setelah inisialisasi
+  sensor_t * s = esp_camera_sensor_get();
+  s->set_framesize(s, FRAMESIZE_XGA); //
 
   // Koneksi WiFi dengan Timeout dan Auto-Restart 📡
   WiFi.mode(WIFI_STA);
